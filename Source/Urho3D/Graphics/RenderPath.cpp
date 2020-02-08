@@ -211,7 +211,7 @@ void RenderPathCommand::Load(const XMLElement& element)
     while (parameterElem)
     {
         ea::string name = parameterElem.GetAttribute("name");
-        shaderParameters_[name] = Material::ParseShaderParameterValue(parameterElem.GetAttribute("value"));
+        shaderParameters_[name] = Material::ParseShaderParameterValue(name, parameterElem.GetAttribute("value"));
         parameterElem = parameterElem.GetNext("parameter");
     }
 

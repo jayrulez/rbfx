@@ -435,7 +435,7 @@ bool Material::Load(const XMLElement& source)
     {
         ea::string name = parameterElem.GetAttribute("name");
         if (!parameterElem.HasAttribute("type"))
-            SetShaderParameter(name, ParseShaderParameterValue(parameterElem.GetAttribute("value")));
+            SetShaderParameter(name, ParseShaderParameterValue(name, parameterElem.GetAttribute("value")));
         else
             SetShaderParameter(name, Variant(parameterElem.GetAttribute("type"), parameterElem.GetAttribute("value")));
         parameterElem = parameterElem.GetNext("parameter");
@@ -593,7 +593,7 @@ bool Material::Load(const JSONValue& source)
     {
         ea::string name = it->first;
         if (it->second.IsString())
-            SetShaderParameter(name, ParseShaderParameterValue(it->second.GetString()));
+            SetShaderParameter(name, ParseShaderParameterValue(name, it->second.GetString()));
         else if (it->second.IsObject())
         {
             JSONObject valueObj = it->second.GetObject();
@@ -1197,11 +1197,18 @@ ea::string Material::GetTextureUnitName(TextureUnit unit)
     return textureUnitNames[unit];
 }
 
-Variant Material::ParseShaderParameterValue(const ea::string& value)
+Variant Material::ParseShaderParameterValue(const ea::string& name, const ea::string& value)
 {
     ea::string valueTrimmed = value.trimmed();
     if (valueTrimmed.length() && IsAlpha((unsigned)valueTrimmed[0]))
         return Variant(ToBool(valueTrimmed));
+    else if (name.ends_with("Color"))
+    {
+        // TODO: Using name as hint for type sucks. Migrating Material and RenderPath to new serialization will obsolete this hack.
+        Variant color;
+        color.FromString(VAR_COLOR, value);
+        return color;
+    }
     else
         return ToVectorVariant(valueTrimmed);
 }
@@ -1226,10 +1233,10 @@ void Material::ResetToDefaults()
     shaderParameters_.clear();
     SetShaderParameter("UOffset", Vector4(1.0f, 0.0f, 0.0f, 0.0f));
     SetShaderParameter("VOffset", Vector4(0.0f, 1.0f, 0.0f, 0.0f));
-    SetShaderParameter("MatDiffColor", Vector4::ONE);
-    SetShaderParameter("MatEmissiveColor", Vector3::ZERO);
-    SetShaderParameter("MatEnvMapColor", Vector3::ONE);
-    SetShaderParameter("MatSpecColor", Vector4(0.0f, 0.0f, 0.0f, 1.0f));
+    SetShaderParameter("MatDiffColor", Color::WHITE);
+    SetShaderParameter("MatEmissiveColor", Color::TRANSPARENT_BLACK);
+    SetShaderParameter("MatEnvMapColor", Color::WHITE);
+    SetShaderParameter("MatSpecColor", Color::BLACK);
     SetShaderParameter("Roughness", 0.5f);
     SetShaderParameter("Metallic", 0.0f);
     batchedParameterUpdate_ = false;

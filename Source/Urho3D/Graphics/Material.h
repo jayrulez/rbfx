@@ -311,7 +311,7 @@ public:
     /// Return name for texture unit.
     static ea::string GetTextureUnitName(TextureUnit unit);
     /// Parse a shader parameter value from a string. Retunrs either a bool, a float, or a 2 to 4-component vector.
-    static Variant ParseShaderParameterValue(const ea::string& value);
+    static Variant ParseShaderParameterValue(const ea::string& name, const ea::string& value);
 
 private:
     /// Helper function for loading JSON files.
