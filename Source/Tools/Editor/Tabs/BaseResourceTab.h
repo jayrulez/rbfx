@@ -63,8 +63,6 @@ protected:
     ea::string resourceName_;
     /// Comparing undo stack size allows determining if open resource was modified during last frame.
     int lastUndoIndex_ = 0;
-    /// State change tracker.
-    UndoStack undo_;
     /// Resource that user would like to open on top of current loaded resource. Used for displaying warning.
     ea::string pendingLoadResource_;
 };

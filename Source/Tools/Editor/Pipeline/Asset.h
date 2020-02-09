@@ -81,8 +81,6 @@ public:
     AssetImporter* GetImporter(Flavor* flavor, StringHash type) const;
     /// Returns true when asset importers of any flavor are being executed in worker threads.
     bool IsImporting() const { return importing_; }
-    ///
-    UndoStack& GetUndo() { return undo_; }
 
 protected:
     ///
@@ -104,8 +102,6 @@ protected:
     AssetImporterMap importers_;
     /// Flag indicating that asset is being imported.
     std::atomic<bool> importing_{false};
-    /// Asset changes tracker.
-    UndoStack undo_{context_};
 
     friend class Pipeline;
     friend class AssetImporter;
